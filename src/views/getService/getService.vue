@@ -43,14 +43,16 @@ export default {
   },
   methods: {
     async getServiceList() {
-      const response = await fetch("http://127.0.0.1:5500/get_service_list");
+      // const response = await fetch("http://127.0.0.1:5500/get_service_list");
+      const response = await fetch("/serv/get_service_list");
       const data = await response.json();
       this.services = data;
       // console.log(this.services);
     },
     async sendRequest(service) {
       const response = await fetch(
-        `http://127.0.0.1:5500/get_execute_url/${service}`
+        // `http://127.0.0.1:5500/get_execute_url/${service}`
+        `/serv/get_execute_url/${service}`
       );
       const data = await response.json();
       this.urlData = data;
@@ -58,7 +60,8 @@ export default {
     },
     async executeTaskResult() {
       const response = await fetch(
-        "http://127.0.0.1:5500/execute_task/face_detection"
+        // "http://127.0.0.1:5500/execute_task/face_detection"
+        "/serv/execute_task/face_detection"
       );
       const data = response.json();
       this.execResult = data;

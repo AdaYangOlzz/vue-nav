@@ -18,7 +18,8 @@ export default {
       submit_jobs: [],
       submit_job: "",
       result: null,
-      resultUrl: "http://127.0.0.1:5000/user/sync_job_result/",
+      // resultUrl: "http://127.0.0.1:5000/user/sync_job_result/",
+      resultUrl: "/dag/user/sync_job_result/",
     };
   },
   mounted() {
@@ -40,7 +41,8 @@ export default {
           console.error(error);
           alert("请求resultUrl失败，请稍后重试");
         });
-      this.resultUrl = "http://127.0.0.1:5000/user/sync_job_result/";
+      // this.resultUrl = "http://127.0.0.1:5000/user/sync_job_result/";
+      this.resultUrl = "/dag/user/sync_job_result/";
     },
   },
 };

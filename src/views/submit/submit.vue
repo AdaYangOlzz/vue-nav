@@ -4,86 +4,16 @@ export default {
   data() {
     return {
       info: {
-        "192.168.56.102:7000": {
+        "<ip>:<port>": {
           video: {
-            0: {
-              type: "traffic flow",
+            "<vid_0>": {
+              type: "<description>",
             },
-            1: {
-              type: "people indoor",
+            "<vid_1>": {
+              type: "<description>",
             },
           },
-        },
-        "192.168.56.102:7001": {
-          video: {
-            0: {
-              type: "traffic flow",
-            },
-            1: {
-              type: "people indoor",
-            },
-          },
-        },
-        "192.168.56.102:7002": {
-          video: {
-            0: {
-              type: "traffic flow",
-            },
-            1: {
-              type: "people indoor",
-            },
-          },
-        },
-        "192.168.56.102:7003": {
-          video: {
-            0: {
-              type: "traffic flow",
-            },
-            1: {
-              type: "people indoor",
-            },
-          },
-        },
-        "192.168.56.102:7004": {
-          video: {
-            0: {
-              type: "traffic flow",
-            },
-            1: {
-              type: "people indoor",
-            },
-          },
-        },
-        "192.168.56.102:7005": {
-          video: {
-            0: {
-              type: "traffic flow",
-            },
-            1: {
-              type: "people indoor",
-            },
-          },
-        },
-        "192.168.56.102:7006": {
-          video: {
-            0: {
-              type: "traffic flow",
-            },
-            1: {
-              type: "people indoor",
-            },
-          },
-        },
-        "192.168.56.102:8000": {
-          video: {
-            0: {
-              type: "traffic flow",
-            },
-            1: {
-              type: "people indoor",
-            },
-          },
-        },
+        }
       },
       selected: null,
       submit_jobs: [],
@@ -92,15 +22,15 @@ export default {
     "video_id": xxx,
     "generator": "SingleFrameGenerator",
     "dag": {
-        "flow": ["D", "C"],
+        "flow": ["face_detection", "face_alignment"],
         "input": {
-            "D": {
+            "face_detection": {
                 "image": "SingleFrameGenerator.image"
             },
-            "C": {
+            "face_alignment": {
                 "image": "SingleFrameGenerator.image",
-                "bbox": "D.bbox",
-                "prob": "D.prob"
+                "bbox": "face_detection.bbox",
+                "prob": "face_detection.prob"
             }
         }
     }
@@ -122,25 +52,30 @@ export default {
     "video_id": ${videoId},
     "generator": "SingleFrameGenerator",
     "dag": {
-        "flow": ["D", "C"],
+        "flow": ["face_detection", "face_alignment"],
         "input": {
-            "D": {
+            "face_detection": {
                 "image": "SingleFrameGenerator.image"
             },
-            "C": {
+            "face_alignment": {
                 "image": "SingleFrameGenerator.image",
-                "bbox": "D.bbox",
-                "prob": "D.prob"
+                "bbox": "face_detection.bbox",
+                "prob": "face_detection.prob"
             }
         }
     }
-  }`;
-      this.sendUrl = "http://127.0.0.1:5000/user/submit_job";
+}`;
+
+      // this.sendUrl = "http://127.0.0.1:5000/user/submit_job";
+      // this.sendUrl = "http://114.212.81.11:5000/user/submit_job";
+      this.sendUrl = "/dag/user/submit_job";
 
       // console.log(this.sendUrl)
     },
     getInfo() {
-      fetch("http://127.0.0.1:5000/node/get_all_status")
+      // fetch("http://127.0.0.1:5000/node/get_all_status")
+      // fetch("http://114.212.81.11:5000/node/get_all_status")
+      fetch("/dag/node/get_all_status")
         .then((response) => response.json())
         .then((data) => {
           // console.log(data)

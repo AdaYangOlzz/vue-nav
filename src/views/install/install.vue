@@ -59,7 +59,8 @@ export default {
         formData.append(this.fileInputs[i].name, codeFile);
       }
       console.log(formData);
-      fetch("http://127.0.0.1:5500//upload-json-and-codefiles-api", {
+      // fetch("http://127.0.0.1:5500//upload-json-and-codefiles-api", {
+      fetch("/serv/upload-json-and-codefiles-api", {
         method: "POST",
         body: formData,
       })
