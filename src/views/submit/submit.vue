@@ -106,6 +106,15 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           // console.log(data.job_uid);
+         if (data.job_uid === "GLOBAL_ID_1.SUB_ID") {
+            sessionStorage.clear();
+
+            this.submit_jobs = [];
+            sessionStorage.setItem(
+              "submit_jobs",
+              JSON.stringify(this.submit_jobs)
+            );
+          } 
           this.submit_jobs.push(data.job_uid);
           console.log(this.submit_jobs);
           sessionStorage.setItem(
