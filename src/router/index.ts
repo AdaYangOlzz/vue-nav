@@ -18,12 +18,12 @@ const router = createRouter({
         },
         {
           path: '/submit',
-          name: '提交任務',
+          name: '提交任务',
           component: () => import('@/views/submit/submit.vue')
         },
         {
           path: '/install',
-          name: '安裝服務',
+          name: '安装服务',
           component: () => import('@/views/install/install.vue')
         },
         {

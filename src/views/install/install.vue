@@ -34,7 +34,7 @@
 
 <script>
 import { ElButton } from "element-plus";
-
+import { ElMessage } from 'element-plus'
 export default {
   components: {
     ElButton,

@@ -1,5 +1,7 @@
 import Vue from 'vue';
 <script>
+import { ElMessage } from 'element-plus'
+
 export default {
   data() {
     return {
@@ -124,8 +126,17 @@ export default {
 
           this.uploadSuccess = true;
           this.isSubmit = true;
+          ElMessage({
+            message: '上传成功',
+            showClose: true,
+            type: 'success',
+            duration: 1500
+          })
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {
+          console.error(error)
+          ElMessage.error('上传失败')
+        });
       // console.log(this.inputText)
       // console.log(JSON.stringify(text) )
     },
@@ -202,7 +213,7 @@ export default {
           <el-button type="primary" plain @click="submitText">Submit</el-button>
         </div>
 
-        <div style="display: inline-block; margin-left: 20px">
+        <!-- <div style="display: inline-block; margin-left: 20px">
           <el-alert
             v-if="uploadSuccess && isSubmit"
             style="margin-top: 20px; max-width: 500px"
@@ -221,7 +232,7 @@ export default {
             :closable="true"
             :duration="2000"
           ></el-alert>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
