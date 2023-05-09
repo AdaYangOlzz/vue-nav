@@ -26,7 +26,7 @@
             {{ k }}: &nbsp;&nbsp;{{ v }}
         </li>
         </li>
-        
+        <el-divider style="margin-top: 30px" />
       </ul>  
     </div>
 </template>

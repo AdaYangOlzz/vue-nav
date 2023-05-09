@@ -11,7 +11,9 @@
   <div>{{ result }}</div>
 </template>
   
-  <script>
+<script>
+import { ref } from 'vue'
+import { ElLoading } from 'element-plus'
 export default {
   data() {
     return {
@@ -20,6 +22,8 @@ export default {
       result: null,
       // resultUrl: "http://127.0.0.1:5000/user/sync_job_result/",
       resultUrl: "/dag/user/sync_job_result/",
+      // loading: "Loading...",
+      intervalId: null
     };
   },
   mounted() {
@@ -30,17 +34,29 @@ export default {
   },
   methods: {
     updateResultUrl() {
+      this.result = null
       this.resultUrl += this.submit_job;
+      const loading = ElLoading.service({
+        lock: true,
+        text: 'Loading',
+        background: 'rgba(0, 0, 0, 0.7)',
+      })
+      // fetch
       fetch(this.resultUrl)
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
+          loading.close()
+          // console.log(data);
           this.result = data;
         })
         .catch((error) => {
           console.error(error);
-          alert("请求resultUrl失败，请稍后重试");
+          loading.close();
+          alert("请求resultUrl失败,请稍后重试");
         });
+      
+      
+
       // this.resultUrl = "http://127.0.0.1:5000/user/sync_job_result/";
       this.resultUrl = "/dag/user/sync_job_result/";
     },

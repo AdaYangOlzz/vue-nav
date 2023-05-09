@@ -26,7 +26,8 @@
       </div>
 
       <br />
-      <el-button type="primary" plain native-type="submit">Submit</el-button>
+      <!-- <el-button type="primary" plain native-type="submit">Submit</el-button> -->
+      <el-button type="primary" plain native-type="submit" :loading="loading">Submit</el-button>
     </form>
   </el-card>
 </template>
@@ -41,6 +42,7 @@ export default {
   data() {
     return {
       fileInputs: [],
+      loading: false
     };
   },
   methods: {
@@ -51,6 +53,7 @@ export default {
       this.fileInputs.pop();
     },
     uploadFiles() {
+      this.loading = true;
       const jsonFile = this.$refs.jsonInput.files[0];
       const formData = new FormData();
       formData.append("task_json", jsonFile);
@@ -77,6 +80,9 @@ export default {
         })
         .catch((error) => {
           console.error("There was a problem with the fetch operation:", error);
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
   },
