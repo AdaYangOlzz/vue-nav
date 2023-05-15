@@ -22,8 +22,10 @@
     <br />
     <div>
       <b>执行结果</b><br />
-      {{ result["result"]["appended_result"] }}
-      <!-- <div v-for="item in result["result"]["appended_result"]"></div> -->
+      <!-- {{ appended_result }} -->
+      <div v-for="item in appended_result">
+        {{ Object.entries(item)[0][0] }} : {{ Object.entries(item)[0][1] }}
+      </div>
     </div>
 
     <br />
@@ -31,7 +33,14 @@
     <div>
       <b>运行时情景</b><br />
       <!-- plan result -->
-      {{ result["result"]["latest_result"]["plan_result"] }}
+      <!-- {{ plan_result }} -->
+      <div v-for="(value, key) in modifiedPlanResult">
+        {{ key }} <br />
+        <div v-for="(v, k) in value">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ k }} : {{ v }}
+        </div>
+        <br />
+      </div>
 
       <!-- resource info -->
     </div>
@@ -40,7 +49,14 @@
 
     <div>
       <b>当前调度配置</b><br />
-      {{ result["result"]["latest_result"]["plan"] }}
+      <!-- {{ plan }} -->
+      <div v-for="(value, key) in plan">
+        {{ key }}<br />
+        <div v-for="(v, k) in value">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ k }}:{{ v }}
+        </div>
+        <br />
+      </div>
     </div>
   </div>
 </template>
@@ -59,6 +75,10 @@ export default {
       // loading: "Loading...",
       intervalId: null,
       timer: null,
+      appended_result: null,
+      plan_result: null,
+      plan: null,
+      resource_info: null,
     };
   },
   mounted() {
@@ -66,9 +86,9 @@ export default {
     if (submitJobs) {
       this.submit_jobs = JSON.parse(submitJobs);
     }
-    this.timer = setInterval(() => {
-      this.updateResultUrl();
-    }, 10000);
+    // this.timer = setInterval(() => {
+    //   this.updateResultUrl();
+    // }, 10000);
   },
   methods: {
     updateResultUrl() {
@@ -85,6 +105,10 @@ export default {
         .then((data) => {
           loading.close();
           this.result = data;
+          this.appended_result = this.result["result"]["appended_result"];
+          this.plan_result =
+            this.result["result"]["latest_result"]["plan_result"];
+          this.plan = this.result["result"]["latest_result"]["plan"];
         })
         .catch((error) => {
           console.error(error);
@@ -96,6 +120,19 @@ export default {
             duration: 1500,
           });
         });
+    },
+  },
+  computed: {
+    modifiedPlanResult() {
+      return Object.fromEntries(
+        Object.entries(this.plan_result).map(([key, value]) => {
+          if (key === "delay") {
+            return ["时延", value];
+          } else {
+            return [key, value];
+          }
+        })
+      );
     },
   },
   beforeUnmount() {
