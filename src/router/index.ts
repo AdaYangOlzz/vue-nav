@@ -31,6 +31,7 @@ const router = createRouter({
           name: '查看结果',
           component: () => import('@/views/result/result.vue')
         }
+
         ,
         {
           path: '/service',

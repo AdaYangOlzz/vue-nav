@@ -1,6 +1,6 @@
 import Vue from 'vue';
 <script>
-import { ElMessage } from 'element-plus'
+import { ElMessage } from "element-plus";
 
 export default {
   data() {
@@ -15,16 +15,16 @@ export default {
               type: "<description>",
             },
           },
-        }
+        },
       },
       selected: null,
       submit_jobs: [],
       inputText: `{
     "node_addr": "xxx.xxx.xxx.xxx:xxxx",
     "video_id": xxx,
-    "generator": "SingleFrameGenerator",
     "dag": {
-        "flow": ["face_detection", "face_alignment"],
+        "generator": "SingleFrameGenerator",
+        "flow": ["SingleFrameGenerator", "face_detection", "face_alignment"],
         "input": {
             "face_detection": {
                 "image": "SingleFrameGenerator.image"
@@ -52,9 +52,9 @@ export default {
       this.inputText = `{
     "node_addr": "${ip}",
     "video_id": ${videoId},
-    "generator": "SingleFrameGenerator",
     "dag": {
-        "flow": ["face_detection", "face_alignment"],
+        "generator": "SingleFrameGenerator",
+        "flow": ["SingleFrameGenerator", "face_detection", "face_alignment"],
         "input": {
             "face_detection": {
                 "image": "SingleFrameGenerator.image"
@@ -108,7 +108,7 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           // console.log(data.job_uid);
-         if (data.job_uid === "GLOBAL_ID_1.SUB_ID") {
+          if (data.job_uid === "GLOBAL_ID_1.SUB_ID") {
             sessionStorage.clear();
 
             this.submit_jobs = [];
@@ -116,7 +116,7 @@ export default {
               "submit_jobs",
               JSON.stringify(this.submit_jobs)
             );
-          } 
+          }
           this.submit_jobs.push(data.job_uid);
           console.log(this.submit_jobs);
           sessionStorage.setItem(
@@ -127,15 +127,15 @@ export default {
           this.uploadSuccess = true;
           this.isSubmit = true;
           ElMessage({
-            message: '上传成功',
+            message: "上传成功",
             showClose: true,
-            type: 'success',
-            duration: 1500
-          })
+            type: "success",
+            duration: 1500,
+          });
         })
         .catch((error) => {
-          console.error(error)
-          ElMessage.error('上传失败')
+          console.error(error);
+          ElMessage.error("上传失败");
         });
       // console.log(this.inputText)
       // console.log(JSON.stringify(text) )
