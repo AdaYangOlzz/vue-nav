@@ -39,16 +39,16 @@
       </el-sub-menu> -->
     <el-menu-item index="/install">
       <el-icon><document /></el-icon>
-      <template #title>安裝服務</template>
+      <template #title>安装服务</template>
     </el-menu-item>
     <el-menu-item index="/submit">
       <el-icon><icon-menu /></el-icon>
-      <template #title>提交任務</template>
+      <template #title>提交任务</template>
     </el-menu-item>
 
     <el-menu-item index="/result">
       <el-icon><setting /></el-icon>
-      <template #title>查看結果</template>
+      <template #title>查看结果</template>
     </el-menu-item>
     <el-menu-item index="/service">
       <el-icon><Operation /></el-icon>
