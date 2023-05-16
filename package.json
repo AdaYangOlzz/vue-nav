@@ -10,6 +10,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "echarts": "^5.4.2",
     "element-plus": "^2.3.4",
     "sass": "^1.62.0",
     "sass-loader": "^13.2.2",
