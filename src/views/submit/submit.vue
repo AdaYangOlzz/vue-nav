@@ -77,7 +77,7 @@ export default {
     getInfo() {
       // fetch("http://127.0.0.1:5000/node/get_all_status")
       // fetch("http://114.212.81.11:5000/node/get_all_status")
-      fetch("/dag/node/get_all_status")
+      fetch("/dag/user/get_all_status")
         .then((response) => response.json())
         .then((data) => {
           // console.log(data)

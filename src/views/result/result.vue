@@ -22,8 +22,17 @@
       <div class="info-box">
         <div class="info-h1-flex-text">
           <div class="info-h2" v-if="plan_result">近期延迟</div>
-          <div class="info-h2-flex-text">
-            <div class="info-h2-flex-text-items">{{ sumValues }}（秒）</div>
+          <div
+            class="info-h2-flex-text"
+            style="display: flex; flex-direction: row"
+          >
+            <div class="info-h2-flex-text-items" style="flex-grow: 1">
+              <div v-if="sumValues">{{ sumValues }}</div>
+              <div v-else>时延尚未计算出</div>
+            </div>
+            <div class="info-h2-flex-text-items">
+              <div v-if="sumValues">(秒)</div>
+            </div>
           </div>
         </div>
 
@@ -223,6 +232,8 @@ export default {
       acc_cons: null,
       cons_url: "/dag/user/submit_constraint",
       // chartData: [],
+      chart: null,
+      showChart: false,
     };
   },
   mounted() {
@@ -252,100 +263,101 @@ export default {
       { key: "720p", ui_value: "1280x720" },
       { key: "1080p", ui_value: "1920x1080" },
     ];
-    // TO_REMOVE: 静态填充
-    this.cluster_info = {
-      "127.0.0.1": {
-        node_role: "cloud",
-        n_cpu: 8,
-        cpu_ratio: 2.5,
-        mem: 4096 * 32,
-        mem_ratio: 0.3,
-      },
-      "127.0.0.2": {
-        node_role: "edge",
-        n_cpu: 4,
-        cpu_ratio: 2.5,
-        mem: 4096,
-        mem_ratio: 0.3,
-      },
-    };
-    // TO_REMOVE: 静态填充
+    // // TO_REMOVE: 静态填充
+    // this.cluster_info = {
+    //   "127.0.0.1": {
+    //     node_role: "cloud",
+    //     n_cpu: 8,
+    //     cpu_ratio: 2.5,
+    //     mem: 4096 * 32,
+    //     mem_ratio: 0.3,
+    //   },
+    //   "127.0.0.2": {
+    //     node_role: "edge",
+    //     n_cpu: 4,
+    //     cpu_ratio: 2.5,
+    //     mem: 4096,
+    //     mem_ratio: 0.3,
+    //   },
+    // };
+    // // TO_REMOVE: 静态填充
 
-    this.result = {
-      result: {
-        // 该部分是列表，代表最近10帧的处理结果
-        appended_result: [
-          {
-            "#no_helmet": 1,
-            n_loop: 11,
-          },
-          {
-            "#no_helmet": 1,
-            n_loop: 12,
-          },
-          {
-            "#no_helmet": 1,
-            n_loop: 13,
-          },
-        ],
+    // this.result = {
+    //   result: {
+    //     // 该部分是列表，代表最近10帧的处理结果
+    //     appended_result: [
+    //       {
+    //         "#no_helmet": 1,
+    //         n_loop: 11,
+    //       },
+    //       {
+    //         "#no_helmet": 1,
+    //         n_loop: 12,
+    //       },
+    //       {
+    //         "#no_helmet": 1,
+    //         n_loop: 13,
+    //       },
+    //     ],
 
-        // 该部分是json，代表最近一次调度的调度策略和调度结果
-        latest_result: {
-          // 当前调度执行计划
-          plan: {
-            flow_mapping: {
-              face_detection: {
-                model_id: 0,
-                node_ip: "192.168.56.102",
-                node_role: "host", // node_role有三种可能：host、edge、cloud，前端只区分cloud和非cloud，非cloud显示为“边端”
-              },
-              face_alignment: {
-                model_id: 0,
-                node_ip: "192.168.56.102",
-                node_role: "cloud",
-              },
-            },
-            video_conf: {
-              encoder: "H264",
-              fps: 24,
-              nskip: 0, // 跳帧率，每处理一帧跳nskip帧
-              ntracking: 5, // 追踪率，每处理一帧追踪ntracking帧
-              resolution: "360p",
-            },
-          },
-          // 最近一次调度后，DAG执行各步骤的平均结果
-          plan_result: {
-            delay: {
-              face_detection: 0.35737492098952783,
-              face_alignment: 0.35737492098952783,
-            },
-          },
-        },
-      },
-      status: 0,
-    };
-    // TO_REMOVE: 静态填充
-    this.appended_result = this.result["result"]["appended_result"];
-    // TO_REMOVE: 静态填充
-    this.plan_result = this.result["result"]["latest_result"]["plan_result"];
-    // TO_REMOVE: 静态填充
-    this.plan = this.result["result"]["latest_result"]["plan"];
-
+    //     // 该部分是json，代表最近一次调度的调度策略和调度结果
+    //     latest_result: {
+    //       // 当前调度执行计划
+    //       plan: {
+    //         flow_mapping: {
+    //           face_detection: {
+    //             model_id: 0,
+    //             node_ip: "192.168.56.102",
+    //             node_role: "host", // node_role有三种可能：host、edge、cloud，前端只区分cloud和非cloud，非cloud显示为“边端”
+    //           },
+    //           face_alignment: {
+    //             model_id: 0,
+    //             node_ip: "192.168.56.102",
+    //             node_role: "cloud",
+    //           },
+    //         },
+    //         video_conf: {
+    //           encoder: "H264",
+    //           fps: 24,
+    //           nskip: 0, // 跳帧率，每处理一帧跳nskip帧
+    //           ntracking: 5, // 追踪率，每处理一帧追踪ntracking帧
+    //           resolution: "360p",
+    //         },
+    //       },
+    //       // 最近一次调度后，DAG执行各步骤的平均结果
+    //       plan_result: {
+    //         delay: {
+    //           face_detection: 0.35737492098952783,
+    //           face_alignment: 0.35737492098952783,
+    //         },
+    //       },
+    //     },
+    //   },
+    //   status: 0,
+    // };
+    // // TO_REMOVE: 静态填充
+    // this.appended_result = this.result["result"]["appended_result"];
+    // // TO_REMOVE: 静态填充
+    // this.plan_result = this.result["result"]["latest_result"]["plan_result"];
+    // // TO_REMOVE: 静态填充
+    // this.plan = this.result["result"]["latest_result"]["plan"];
+    // this.initChart();
     // this.timer = setInterval(() => {
     //   this.updateResultUrl();
     // }, 10000);
   },
   methods: {
-    drawChart() {
+    initChart() {
+      console.log(this.result);
+      this.chart = echarts.init(document.getElementById("chart"));
+    },
+    updateChart() {
       const yKey = Object.keys(this.appended_result[0])[0]; // 获取第一个键名作为纵坐标的键名
 
       const data = this.appended_result.map((item) => ({
         x: item.n_loop,
         y: item[yKey], // 使用纵坐标的键名来获取对应的值
       }));
-
-      const chart = echarts.init(document.getElementById("chart"));
-
       const option = {
         xAxis: {
           type: "category",
@@ -364,8 +376,9 @@ export default {
         ],
       };
 
-      chart.setOption(option);
+      this.chart.setOption(option);
     },
+
     show_more_info() {
       this.should_show_more_info = !this.should_show_more_info;
       console.log(this.should_show_more_info);
@@ -383,22 +396,24 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           loading.close();
+          console.log(data);
           this.result = data;
           this.appended_result = this.result["result"]["appended_result"];
           this.plan_result =
             this.result["result"]["latest_result"]["plan_result"];
           this.plan = this.result["result"]["latest_result"]["plan"];
-          this.drawChart();
+          this.showChart = true;
         })
         .catch((error) => {
           console.error(error);
           loading.close();
           ElMessage({
             showClose: true,
-            message: "Oops, this is a error message.",
+            message: "结果尚未生成,请稍后",
             type: "error",
             duration: 1500,
           });
+          this.result = null;
         });
     },
 
@@ -428,8 +443,19 @@ export default {
       };
 
       apiHandler(formData)
-        .then((data) => console.log(data))
-        .catch((error) => console.log(error));
+        .then((data) => {
+          console.log(data);
+          ElMessage({
+            message: "修改约束成功",
+            showClose: true,
+            type: "success",
+            duration: 1000,
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          ElMessage.error("提交失败");
+        });
 
       // fetch post end
 
@@ -441,11 +467,34 @@ export default {
       //   body: formData,
       // })
       //   .then((response) => response.json())
-      //   .then((data) => console.log(data));
+      //   .then((data) => {
+      //     console.log(data);
+      //     ElMessage({
+      //       message: "修改约束成功",
+      //       showClose: true,
+      //       type: "success",
+      //       duration: 1000,
+      //     });
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //     ElMessage.error("提交失败");
+      //   });
     },
+  },
+  updated() {
+    if (this.showChart && !this.chart) {
+      this.initChart();
+    }
+    if (this.showChart) {
+      this.updateChart();
+    }
   },
   computed: {
     modifiedPlanResult() {
+      if (this.plan_result) {
+        return null;
+      }
       return Object.fromEntries(
         Object.entries(this.plan_result).map(([key, value]) => {
           if (key === "delay") {
@@ -457,6 +506,9 @@ export default {
       );
     },
     modifiedPlan() {
+      if (!this.plan) {
+        return null;
+      }
       return Object.fromEntries(
         Object.entries(this.plan).map(([key, value]) => {
           if (key === "flow_mapping") {
@@ -470,6 +522,8 @@ export default {
       );
     },
     sumValues() {
+      // console.log(this.plan_result);
+      // console.log(this.plan_result["delay"]);
       const delayObj = this.plan_result["delay"];
       if (delayObj) {
         const values = Object.values(delayObj);

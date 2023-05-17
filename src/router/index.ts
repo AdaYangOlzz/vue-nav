@@ -33,11 +33,6 @@ const router = createRouter({
         }
         ,
         {
-          path: '/chart',
-          name: '图表测试',
-          component: () => import('@/views/result/chart.vue')
-        },
-        {
           path: '/service',
           name: '已装载服务',
           component: () => import('@/views/getService/getService.vue')

@@ -54,10 +54,6 @@
       <el-icon><Operation /></el-icon>
       <template #title>已装载服务</template>
     </el-menu-item>
-    <el-menu-item index="/chart">
-      <el-icon><Operation /></el-icon>
-      <template #title>图表测试</template>
-    </el-menu-item>
   </el-menu>
 </template>
   
