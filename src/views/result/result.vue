@@ -19,9 +19,23 @@
       <!-- <div class="info-box">时延：20s 精度：0.7</div> -->
 
       <div class="info-box">
-        <div v-if="plan_result">近期延迟:&nbsp;&nbsp;&nbsp;{{ sumValues }}</div>
-        <div>修改时延约束:<el-input v-model="delay_cons"></el-input></div>
-        <div>修改精度约束:<el-input v-model="acc_cons"></el-input></div>
+        <div class="info-h1-flex-text">
+          <div class="info-h2" v-if="plan_result">近期延迟</div>
+          <div class="info-h2-flex-text">
+            <div class="info-h2-flex-text-items">{{ sumValues }}（秒）</div>
+          </div>
+        </div>
+
+        <div class="info-h1">修改时延约束</div>
+        <div class="info-h1-flex-text">
+          <el-input v-model="delay_cons"></el-input>
+        </div>
+
+        <div class="info-h1">修改精度约束</div>
+        <div class="info-h1-flex-text">
+          <el-input v-model="acc_cons"></el-input>
+        </div>
+
         <br />
         <el-button type="primary" plain @click="submitConstraint"
           >Submit</el-button
@@ -51,22 +65,36 @@
           <div>
             <div class="info-h1-flex-text" v-for="(v, k) in value">
               <div class="info-h2">{{ k }}</div>
-              <div class="info-h2-flex-text">{{ v }}</div>
+              <div class="info-h2-flex-text">
+                <div class="info-h2-flex-text-items">{{ v }}</div>
+              </div>
             </div>
           </div>
         </div>
 
         <div>
           <!-- {{ cluster_info }} -->
-          <div>系统资源</div>
-          <div v-for="(value, key) in cluster_info">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ key }}<br />
-            <div v-for="(v, k) in value">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{
-                k
-              }}:&nbsp;&nbsp;{{ v }}
+          <div class="info-h1">系统资源</div>
+          <div class="info-h1-flex-text" v-for="(value, ip) in cluster_info">
+            <!--IP作为二级标题-->
+            <div class="info-h2">{{ ip }}</div>
+            <div class="info-h2-flex-text">
+              <div
+                class="info-h2-flex-text-items"
+                v-if="value['node_role'] === 'cloud'"
+              >
+                云端
+              </div>
+              <div class="info-h2-flex-text-items" v-else>边端</div>
+
+              <div class="info-h2-flex-text-items">
+                CPU：{{ value["n_cpu"] }}核（已占用{{ value["cpu_ratio"] }}）
+              </div>
+
+              <div class="info-h2-flex-text-items">
+                内存：{{ value["mem"] }}MB（已占用{{ value["mem_ratio"] }}%）
+              </div>
             </div>
-            <br />
           </div>
         </div>
       </div>
@@ -349,7 +377,7 @@ export default {
       formData.append("delay", this.delay_cons);
       formData.append("accuracy", this.acc_cons);
 
-      // manipulate(wait to remove)
+      // simulate(wait to remove)
       const apiHandler = (formData) => {
         return new Promise((resolve, reject) => {
           setTimeout(() => {
@@ -458,9 +486,10 @@ export default {
 .info-h2 {
   width: min-content;
   height: min-content;
+  white-space: nowrap;
   text-align: center;
   color: #2f74ff;
-  background-color: rgb(187, 187, 187);
+  background-color: rgb(220, 220, 220);
   /* line-height: 20px; */
   /* border: 2px dashed rgb(77, 77, 77); */
   /* margin: 5px; */
@@ -475,17 +504,24 @@ export default {
   margin-right: 5px;
 }
 .info-h2-flex-text {
+  display: flex;
+  align-items: center;
   margin: 5px;
+}
+.info-h2-flex-text-items {
+  margin-right: 10px;
+  border-bottom: 2px dashed #2f74ff;
 }
 </style>
 
 <style lang="scss" scoped>
-::v-deep .user-radio {
+:deep(.user-radio) {
+  // ::v-deep .user-radio {
   .el-radio-button__inner {
     color: #ffffff;
     border: 1px solid #ffffff;
     // border-radius: 4px;
-    background: #b8b8b8;
+    background: #dcdcdc;
   }
 
   .el-radio-button__original-radio:disabled:checked + .el-radio-button__inner {
