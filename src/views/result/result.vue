@@ -11,8 +11,9 @@
 
   <!-- <div v-if="submit_job && !result" v-loading="!result" element-loading-text="Loading..."></div> -->
 
-  <!-- <div v-if="result">{{ result }}</div> -->
-
+  <!-- <div>
+    <div id="chart" style="width: 600px; height: 400px"></div>
+  </div> -->
   <div v-if="result">
     <div>
       <div class="info-header">用户约束</div>
@@ -46,13 +47,13 @@
     <div>
       <div class="info-header">执行结果</div>
       <div class="info-box">
-        <!-- {{ appended_result }} -->
-        <div v-for="item in appended_result">
+        <!-- <div v-for="item in appended_result">
           {{ Object.entries(item)[0][0] }} : {{ Object.entries(item)[0][1] }}
           {{ Object.entries(item)[1][0] }} : {{ Object.entries(item)[1][1] }}
-        </div>
-        <!-- <div ref="chart" style="width: 100%; height: 500px"></div> -->
+        </div> -->
+        <div id="chart" style="width: 600px; height: 400px"></div>
       </div>
+      <div></div>
     </div>
 
     <div>
@@ -196,7 +197,7 @@
 <script>
 import { ref, onBeforeUnmount } from "vue";
 import { ElLoading, ElMessage } from "element-plus";
-// import * as echarts from "echarts";
+import * as echarts from "echarts";
 
 export default {
   data() {
@@ -221,6 +222,7 @@ export default {
       delay_cons: null,
       acc_cons: null,
       cons_url: "/dag/user/submit_constraint",
+      // chartData: [],
     };
   },
   mounted() {
@@ -334,6 +336,36 @@ export default {
     // }, 10000);
   },
   methods: {
+    drawChart() {
+      const yKey = Object.keys(this.appended_result[0])[0]; // 获取第一个键名作为纵坐标的键名
+
+      const data = this.appended_result.map((item) => ({
+        x: item.n_loop,
+        y: item[yKey], // 使用纵坐标的键名来获取对应的值
+      }));
+
+      const chart = echarts.init(document.getElementById("chart"));
+
+      const option = {
+        xAxis: {
+          type: "category",
+          data: data.map((item) => item.x), // 使用映射后的横坐标数据
+          name: "帧数",
+        },
+        yAxis: {
+          type: "value",
+          name: "检测到的数量",
+        },
+        series: [
+          {
+            type: "line",
+            data: data.map((item) => item.y), // 使用映射后的纵坐标数据
+          },
+        ],
+      };
+
+      chart.setOption(option);
+    },
     show_more_info() {
       this.should_show_more_info = !this.should_show_more_info;
       console.log(this.should_show_more_info);
@@ -356,6 +388,7 @@ export default {
           this.plan_result =
             this.result["result"]["latest_result"]["plan_result"];
           this.plan = this.result["result"]["latest_result"]["plan"];
+          this.drawChart();
         })
         .catch((error) => {
           console.error(error);
@@ -438,9 +471,12 @@ export default {
     },
     sumValues() {
       const delayObj = this.plan_result["delay"];
-      const values = Object.values(delayObj);
-      const sum = values.reduce((a, b) => a + b, 0);
-      return sum;
+      if (delayObj) {
+        const values = Object.values(delayObj);
+        const sum = values.reduce((a, b) => a + b, 0);
+        return sum;
+      }
+      return 0;
     },
   },
   beforeUnmount() {
