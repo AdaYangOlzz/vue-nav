@@ -358,6 +358,69 @@ export default {
         x: item.n_loop,
         y: item[yKey], // 使用纵坐标的键名来获取对应的值
       }));
+
+      const appended_data = this.appended_result;
+
+      // 获取追加结果中key非n_loop的数据
+      var xAsixName = "n_loop";
+      var seriesData = {};
+      var resKeyList = [];
+      console.log("appended_data length: " + appended_data.length);
+      for (var i = 0; i < appended_data.length; i++) {
+        var keyList = Object.keys(appended_data[i]);
+        for (var j = 0; j < keyList.length; j++) {
+          if (resKeyList.indexOf(keyList[j]) == -1) {
+            resKeyList.push(keyList[j]);
+          }
+        }
+        // resKeyList = resKeyList.concat(keyList);
+      }
+      // resKeyList = [new Set(resKeyList)]
+      console.log("resKeyList: " + resKeyList);
+      // var resKeyList = Object.keys(appended_data[0])
+      for (var i = 0; i < resKeyList.length; i++) {
+        var key = resKeyList[i];
+        if (key !== xAsixName) {
+          seriesData[key] = [];
+        }
+      }
+      console.log("init seriesData keys: " + Object.keys(seriesData));
+      // 生成各key的数据序列
+      for (var i = 0; i < appended_data.length; i++) {
+        var frameInfo = appended_data[i];
+        for (var j in frameInfo) {
+          var key = j;
+          var value = frameInfo[j];
+          if (key !== xAsixName) {
+            seriesData[key].push(value);
+          }
+        }
+      }
+      // 生成series列表和与其对应的legend列表
+      var seriesList = [];
+      var legendList = [];
+      console.log("seriesData entries: " + Object.entries(seriesData));
+      for (var ent of Object.entries(seriesData)) {
+        // console.log("ent[0]=" + ent[0]);
+        // console.log("ent[1]=" + ent[1]);
+        legendList.push(ent[0]);
+        seriesList.push({
+          name: ent[0],
+          type: "bar",
+          stack: "stack",
+          label: {
+            show: true,
+            position: "top",
+            color: "black",
+            fontSize: 12,
+            formatter: function (d) {
+              return d.data;
+            },
+          },
+          data: ent[1],
+        });
+      }
+
       const option = {
         xAxis: {
           type: "category",
@@ -368,15 +431,20 @@ export default {
           type: "value",
           name: "检测到的数量",
         },
-        series: [
-          {
-            type: "line",
-            data: data.map((item) => item.y), // 使用映射后的纵坐标数据
-          },
-        ],
+        legend: {
+          data: legendList,
+        },
+        series: seriesList,
+        // series: [
+        //   {
+        //     type: "line",
+        //     data: data.map((item) => item.y), // 使用映射后的纵坐标数据
+        //   },
+        // ],
       };
 
-      this.chart.setOption(option);
+      this.chart.setOption(option, true); // 不要合并更新
+      // this.chart.setSeries(seriesList)
     },
 
     show_more_info() {
