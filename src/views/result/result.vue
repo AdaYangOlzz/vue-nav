@@ -230,7 +230,7 @@ export default {
       resolution_type_list: [],
       delay_cons: null,
       acc_cons: null,
-      cons_url: "/dag/user/submit_constraint",
+      cons_url: "/dag/user/submit_job_user_constraint",
       // chartData: [],
       chart: null,
       showChart: false,
@@ -264,22 +264,22 @@ export default {
       { key: "1080p", ui_value: "1920x1080" },
     ];
     // // TO_REMOVE: 静态填充
-    // this.cluster_info = {
-    //   "127.0.0.1": {
-    //     node_role: "cloud",
-    //     n_cpu: 8,
-    //     cpu_ratio: 2.5,
-    //     mem: 4096 * 32,
-    //     mem_ratio: 0.3,
-    //   },
-    //   "127.0.0.2": {
-    //     node_role: "edge",
-    //     n_cpu: 4,
-    //     cpu_ratio: 2.5,
-    //     mem: 4096,
-    //     mem_ratio: 0.3,
-    //   },
-    // };
+    this.cluster_info = {
+      "127.0.0.1": {
+        node_role: "cloud",
+        n_cpu: 8,
+        cpu_ratio: 2.5,
+        mem: 4096 * 32,
+        mem_ratio: 0.3,
+      },
+      "127.0.0.2": {
+        node_role: "edge",
+        n_cpu: 4,
+        cpu_ratio: 2.5,
+        mem: 4096,
+        mem_ratio: 0.3,
+      },
+    };
     // // TO_REMOVE: 静态填充
 
     // this.result = {
@@ -342,9 +342,9 @@ export default {
     // // TO_REMOVE: 静态填充
     // this.plan = this.result["result"]["latest_result"]["plan"];
     // this.initChart();
-    // this.timer = setInterval(() => {
-    //   this.updateResultUrl();
-    // }, 10000);
+    this.timer = setInterval(() => {
+      this.updateResultUrl();
+    }, 10000);
   },
   methods: {
     initChart() {
@@ -365,7 +365,7 @@ export default {
       var xAsixName = "n_loop";
       var seriesData = {};
       var resKeyList = [];
-      console.log("appended_data length: " + appended_data.length);
+      // console.log("appended_data length: " + appended_data.length);
       for (var i = 0; i < appended_data.length; i++) {
         var keyList = Object.keys(appended_data[i]);
         for (var j = 0; j < keyList.length; j++) {
@@ -376,7 +376,7 @@ export default {
         // resKeyList = resKeyList.concat(keyList);
       }
       // resKeyList = [new Set(resKeyList)]
-      console.log("resKeyList: " + resKeyList);
+      // console.log("resKeyList: " + resKeyList);
       // var resKeyList = Object.keys(appended_data[0])
       for (var i = 0; i < resKeyList.length; i++) {
         var key = resKeyList[i];
@@ -384,7 +384,7 @@ export default {
           seriesData[key] = [];
         }
       }
-      console.log("init seriesData keys: " + Object.keys(seriesData));
+      // console.log("init seriesData keys: " + Object.keys(seriesData));
       // 生成各key的数据序列
       for (var i = 0; i < appended_data.length; i++) {
         var frameInfo = appended_data[i];
@@ -399,7 +399,7 @@ export default {
       // 生成series列表和与其对应的legend列表
       var seriesList = [];
       var legendList = [];
-      console.log("seriesData entries: " + Object.entries(seriesData));
+      // console.log("seriesData entries: " + Object.entries(seriesData));
       for (var ent of Object.entries(seriesData)) {
         // console.log("ent[0]=" + ent[0]);
         // console.log("ent[1]=" + ent[1]);
@@ -487,30 +487,25 @@ export default {
 
     // submit user constraint
     submitConstraint() {
-      console.log(this.delay_cons);
-      console.log(this.acc_cons);
-      const formData = new FormData();
-      formData.append("delay", this.delay_cons);
-      formData.append("accuracy", this.acc_cons);
-
-      // simulate(wait to remove)
-      const apiHandler = (formData) => {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            const result = {
-              code: 200,
-              msg: "success",
-              data: {
-                delay: formData.get("delay"),
-                accuracy: formData.get("accuracy"),
-              },
-            };
-            resolve(result);
-          }, 2000);
-        });
+      const userConstraint = {
+        delay: parseFloat(this.delay_cons),
+        accuracy: parseFloat(this.acc_cons),
       };
+      const data = {
+        job_uid: this.submit_job,
+        user_constraint: userConstraint,
+      };
+      console.log(data);
 
-      apiHandler(formData)
+      // fetch post end
+      fetch(this.cons_url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
         .then((data) => {
           console.log(data);
           ElMessage({
@@ -524,30 +519,6 @@ export default {
           console.log(error);
           ElMessage.error("提交失败");
         });
-
-      // fetch post end
-
-      // fetch(this.cons_url, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: formData,
-      // })
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     console.log(data);
-      //     ElMessage({
-      //       message: "修改约束成功",
-      //       showClose: true,
-      //       type: "success",
-      //       duration: 1000,
-      //     });
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //     ElMessage.error("提交失败");
-      //   });
     },
   },
   updated() {
