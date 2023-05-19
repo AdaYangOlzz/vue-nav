@@ -33,6 +33,10 @@ export default {
                 "image": "SingleFrameGenerator.image",
                 "bbox": "face_detection.bbox",
                 "prob": "face_detection.prob"
+            },
+            "Render": {
+                "image": "face_alignment.image",
+                "count": "face_alignment.count_result"
             }
         }
     }
@@ -63,6 +67,10 @@ export default {
                 "image": "SingleFrameGenerator.image",
                 "bbox": "face_detection.bbox",
                 "prob": "face_detection.prob"
+            },
+            "Render": {
+                "image": "face_alignment.image",
+                "count": "face_alignment.count_result"
             }
         }
     }

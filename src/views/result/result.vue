@@ -60,7 +60,17 @@
           {{ Object.entries(item)[0][0] }} : {{ Object.entries(item)[0][1] }}
           {{ Object.entries(item)[1][0] }} : {{ Object.entries(item)[1][1] }}
         </div> -->
-        <div id="chart" style="width: 600px; height: 400px"></div>
+        <div style="display: flex; flex-wrap: wrap">
+          <div style="flex-basis: 50%">
+            <div id="chart" style="width: 600px; height: 400px"></div>
+          </div>
+          <div style="flex-basis: 50%">
+            {{ videoUrl + submit_job }}
+            <div>
+              <img :src="videoUrl + submit_job" width="480" height="360" />
+            </div>
+          </div>
+        </div>
       </div>
       <div></div>
     </div>
@@ -234,6 +244,7 @@ export default {
       // chartData: [],
       chart: null,
       showChart: false,
+      videoUrl: "video/user/video/",
     };
   },
   mounted() {
@@ -344,7 +355,7 @@ export default {
     // this.initChart();
     this.timer = setInterval(() => {
       this.updateResultUrl();
-    }, 10000);
+    }, 50000);
   },
   methods: {
     initChart() {
